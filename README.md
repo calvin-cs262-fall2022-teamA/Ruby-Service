@@ -1,5 +1,5 @@
 # Ruby Service
-Nothing yet
+Initial tables and queries with data for testing
 
 ## GitHub Links
 - [Team Organization](https://github.com/calvin-cs262-fall2022-teamA)
