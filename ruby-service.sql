@@ -7,11 +7,13 @@ Drop TABLE IF EXISTS TrailerUser;
 DROP TABLE IF EXISTS TrailerItem;
 DROP TABLE IF EXISTS Users;
 
+CREATE TYPE userAccess AS ENUM ('Admin', 'Site', 'Volunteer');
+
 -- Create the schema.
 CREATE TABLE Users (
   username varchar(25) PRIMARY KEY NOT NULL,
   password varchar(50) NOT NULL,
-	type varchar(10) NOT NULL
+	userType userAccess NOT NULL
 	);
 
 CREATE TABLE Events (
@@ -28,6 +30,7 @@ CREATE TABLE Trailer (
 
 CREATE TABLE Item (
   ID integer PRIMARY KEY, 
+  TID integer REFERENCES Trailer(ID),
   name varchar(25),
   quantity integer,
   notificationlevel integer,
@@ -39,11 +42,6 @@ CREATE TABLE TrailerUser (
   UID varchar(25) REFERENCES Users(username)
   );
 
-CREATE TABLE TrailerItem (
-  TID integer REFERENCES Trailer(ID),
-  IID integer REFERENCES Item(ID)
-  );
-
 -- Allow users to select data from the tables.
 GRANT SELECT ON Users TO PUBLIC;
 GRANT SELECT ON Events TO PUBLIC;
@@ -51,29 +49,3 @@ GRANT SELECT ON Trailer TO PUBLIC;
 GRANT SELECT ON Item TO PUBLIC;
 GRANT SELECT ON TrailerUser TO PUBLIC;
 GRANT SELECT ON TrailerItem TO PUBLIC;
-
-INSERT INTO Trailer VALUES (1, 'Trailer 1');
-INSERT INTO Trailer VALUES (2, 'Trailer 2');
-
-INSERT INTO Users VALUES ('Site1', 'Site1', 'Site');
-INSERT INTO Users VALUES ('Volunteer1', 'Volunteer1', 'Volunteer');
-INSERT INTO Users VALUES ('Admin1', 'Admin1', 'Admin');
-
-INSERT INTO Events VALUES (1, 'Clothes Distribution', '2022-11-28 15:20:00', 'Distribute clothing donations to GR families');
-INSERT INTO Events VALUES (2, 'Food Distribution', '2022-12-29 13:40:00', 'Distribute food');
-
-INSERT INTO Item VALUES (1, 'Cups', 300, 50, 25);
-INSERT INTO Item VALUES (2, 'Cups', 500, 150, 50);
-INSERT INTO Item VALUES (3, 'Spoons', 100, 10, 40);
-INSERT INTO Item VALUES (4, 'Forks', 800, 100, 150);
-INSERT INTO Item VALUES (5, 'Plates', 200, 75, 40);
-
-INSERT INTO TrailerUser VALUES (1, 'Site1');
-INSERT INTO TrailerUser VALUES (1, 'Admin1');
-INSERT INTO TrailerUser VALUES (2, 'Admin1');
-
-INSERT INTO TrailerItem VALUES (1, 1);
-INSERT INTO TrailerItem VALUES (2, 2);
-INSERT INTO TrailerItem VALUES (1, 3);
-INSERT INTO TrailerItem VALUES (1, 4);
-INSERT INTO TrailerItem VALUES (2, 5);
