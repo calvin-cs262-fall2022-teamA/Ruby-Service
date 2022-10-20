@@ -1,11 +1,10 @@
 -- Drop previous versions of the tables if they they exist, in reverse order of foreign keys.
 
-DROP TABLE IF EXISTS Events;
-DROP TABLE IF EXISTS Trailer;
-DROP TABLE IF EXISTS Item;
-Drop TABLE IF EXISTS TrailerUser;
-DROP TABLE IF EXISTS TrailerItem;
-DROP TABLE IF EXISTS Users;
+Drop TABLE IF EXISTS TrailerUser CASCADE;
+DROP TABLE IF EXISTS Events CASCADE;
+DROP TABLE IF EXISTS Item CASCADE;
+DROP TABLE IF EXISTS Trailer CASCADE;
+DROP TABLE IF EXISTS Users CASCADE;
 
 CREATE TYPE userAccess AS ENUM ('Admin', 'Site', 'Volunteer');
 
@@ -25,13 +24,13 @@ CREATE TABLE Events (
 
 CREATE TABLE Trailer (
   ID integer PRIMARY KEY, 
-	name varchar(25)
+	tname varchar(25)
 	);
 
 CREATE TABLE Item (
   ID integer PRIMARY KEY, 
   TID integer REFERENCES Trailer(ID),
-  name varchar(25),
+  iname varchar(25),
   quantity integer,
   notificationlevel integer,
   increment integer

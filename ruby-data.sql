@@ -10,7 +10,7 @@ INSERT INTO Events VALUES (1, 'Clothes Distribution', '2022-11-28 15:20:00', 'Di
 INSERT INTO Events VALUES (2, 'Food Distribution', '2022-12-29 13:40:00', 'Distribute food');
 
 INSERT INTO Item VALUES (1, 1, 'Cups', 300, 50, 25);
-INSERT INTO Item VALUES (2, 2, 'Cups', 500, 150, 50);
+INSERT INTO Item VALUES (2, 2, 'Cups', 100, 150, 50);
 INSERT INTO Item VALUES (3, 1, 'Spoons', 100, 10, 40);
 INSERT INTO Item VALUES (4, 1, 'Forks', 800, 100, 150);
 INSERT INTO Item VALUES (5, 2, 'Plates', 200, 75, 40);

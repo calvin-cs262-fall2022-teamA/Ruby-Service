@@ -4,8 +4,15 @@ SELECT name
   FROM Trailer;
 
 -- Get all Items in a Trailer, sort alphabetically
+SELECT *
+  FROM Item, Trailer
+  WHERE Item.TID = Trailer.ID
+    AND Trailer.tname = 'Trailer 1' -- Hardcoded Example
 
 -- Get all items below below min quantity
+SELECT * 
+  FROM Item
+  WHERE Item.quantity < Item.notificationlevel
 
 -- Add Item
 
@@ -17,8 +24,15 @@ SELECT name
 
 -- Login
 -- Get number of users with name and password
+SELECT userType
+  FROM Users
+  WHERE Users.username = 'Site1' -- Hardcoded Example 
+    AND Users.password = 'Site1' -- Hardcoded Example 
 
 -- Get number of users with username
+SELECT COUNT(*)
+  FROM Users
+  WHERE Users.username = 'Site1' -- Hardcoded Example
 
 -- Add user
 
@@ -27,6 +41,8 @@ SELECT name
 
 -- Events
 -- Get All events
+SELECT *
+  FROM Events
 
 -- Add Event
 
