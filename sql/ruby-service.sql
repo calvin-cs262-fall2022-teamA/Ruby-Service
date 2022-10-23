@@ -17,20 +17,20 @@ CREATE TABLE Users (
 	);
 
 CREATE TABLE Events (
-	ID integer PRIMARY KEY, 
+	ID SERIAL PRIMARY KEY, 
 	name varchar(50),
   time timestamp,
   description text
 	);
 
 CREATE TABLE Trailer (
-  ID integer PRIMARY KEY, 
+  ID SERIAL PRIMARY KEY, 
 	tname varchar(25)
 	);
 
 CREATE TABLE Item (
-  ID integer PRIMARY KEY, 
-  TID integer REFERENCES Trailer(ID),
+  ID SERIAL PRIMARY KEY, 
+  TID SERIAL REFERENCES Trailer(ID),
   iname varchar(25),
   quantity integer,
   notificationlevel integer,
@@ -38,7 +38,7 @@ CREATE TABLE Item (
   );
 
 CREATE TABLE TrailerUser (
-  TID integer REFERENCES Trailer(ID),
+  TID SERIAL REFERENCES Trailer(ID),
   UID varchar(25) REFERENCES Users(username)
   );
 
