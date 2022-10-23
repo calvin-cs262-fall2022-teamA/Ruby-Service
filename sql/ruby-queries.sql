@@ -22,6 +22,10 @@ SELECT *
 
 -- Set Trailer name
 
+-- Remove Item
+
+-- Remove Trailer
+
 -- Login
 -- Get number of users with name and password
 SELECT userType
@@ -39,11 +43,17 @@ SELECT COUNT(*)
 -- Currently no mechanism to recover password - potential feature
 -- Set user password
 
+-- Remove user
+
 -- Events
 -- Get All events
 SELECT *
   FROM Events
 
+-- Get All upcoming events
+
 -- Add Event
 
 -- Set Event information
+
+-- Remove Event
