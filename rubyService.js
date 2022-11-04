@@ -117,7 +117,7 @@ function readUsername(req, res, next) {
 
 // EX input: {username: Site1, pswd: Site1}
 // output: number of users
-function readUsername(req, res, next) {
+function readUserType(req, res, next) {
   db.oneOrNone("SELECT userType FROM Users WHERE username=${username} AND password=${pswd}", req.body)
     .then(data => {
       returnDataOr404(res, data);
