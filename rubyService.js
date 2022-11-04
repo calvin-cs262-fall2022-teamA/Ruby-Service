@@ -84,7 +84,7 @@ function readItems(req, res, next) {
 
 // output: iname, quantity, notificationlevel, increment
 function readNotifications(req, res, next) {
-  db.many("SELECT iname, quantity, notificationlevel, increment FROM Item")
+  db.many("SELECT iname, quantity, notificationlevel, increment FROM Item WHERE quantity < notificationlevel")
     .then(data => {
       returnDataOr404(res, data);
     })
