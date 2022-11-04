@@ -21,18 +21,18 @@ router.use(express.json());
 router.get("/", readHelloMessage);
 
 // Item operations
-router.get("/trailers", readTrailers);
-router.get("/items", readItems);
+// router.get("/trailers", readTrailers);
+// router.get("/items", readItems);
 
-// Notification operations
-router.get("/notifications", readNotifications);
+// // Notification operations
+// router.get("/notifications", readNotifications);
 
-// Event operations
-router.get("/events", readEvents);
+// // Event operations
+// router.get("/events", readEvents);
 
-// User operations
-router.get("/username", readUsername);
-router.get("/usertype", readUserType);
+// // User operations
+// router.get("/username", readUsername);
+// router.get("/usertype", readUserType);
 
 app.use(router);
 app.use(errorHandler);
@@ -59,73 +59,73 @@ function readHelloMessage(req, res) {
   res.send('Hello, Be A Ruby service!');
 }
 
-// Returns list of trailer names
-function readTrailers(req, res, next) {
-  db.many("SELECT tname FROM Trailer")
-    .then(data => {
-      returnDataOr404(res, data);
-    })
-    .catch(err => {
-      next(err);
-    })
-}
+// // Returns list of trailer names
+// function readTrailers(req, res, next) {
+//   db.many("SELECT tname FROM Trailer")
+//     .then(data => {
+//       returnDataOr404(res, data);
+//     })
+//     .catch(err => {
+//       next(err);
+//     })
+// }
 
-// EX input: {trailerName: Trailer 1}
-// output: iname, quantity, notificationlevel, increment
-function readItems(req, res, next) {
-  db.many("SELECT iname, quantity, notificationlevel, increment FROM Item, Trailer WHERE Item.TID = Trailer.ID AND Trailer.tname=${body.trailerName}", req)
-    .then(data => {
-      returnDataOr404(res, data);
-    })
-    .catch(err => {
-      next(err);
-    })
-}
+// // EX input: {trailerName: Trailer 1}
+// // output: iname, quantity, notificationlevel, increment
+// function readItems(req, res, next) {
+//   db.many("SELECT iname, quantity, notificationlevel, increment FROM Item, Trailer WHERE Item.TID = Trailer.ID AND Trailer.tname=${body.trailerName}", req)
+//     .then(data => {
+//       returnDataOr404(res, data);
+//     })
+//     .catch(err => {
+//       next(err);
+//     })
+// }
 
-// output: iname, quantity, notificationlevel, increment
-function readNotifications(req, res, next) {
-  db.many("SELECT iname, quantity, notificationlevel, increment FROM Item")
-    .then(data => {
-      returnDataOr404(res, data);
-    })
-    .catch(err => {
-      next(err);
-    })
-}
+// // output: iname, quantity, notificationlevel, increment
+// function readNotifications(req, res, next) {
+//   db.many("SELECT iname, quantity, notificationlevel, increment FROM Item")
+//     .then(data => {
+//       returnDataOr404(res, data);
+//     })
+//     .catch(err => {
+//       next(err);
+//     })
+// }
 
-function readEvents(req, res, next) {
-  db.many("SELECT name, time, description FROM Events")
-    .then(data => {
-      returnDataOr404(res, data);
-    })
-    .catch(err => {
-      next(err);
-    })
-}
+// function readEvents(req, res, next) {
+//   db.many("SELECT name, time, description FROM Events")
+//     .then(data => {
+//       returnDataOr404(res, data);
+//     })
+//     .catch(err => {
+//       next(err);
+//     })
+// }
 
-// EX input: {username: Site1}
-// output: number of users
-function readUsername(req, res, next) {
-  db.oneOrNone("SELECT Count(*) FROM Users WHERE username=${username}", req.body)
-    .then(data => {
-      returnDataOr404(res, data);
-    })
-    .catch(err => {
-      next(err);
-    })
-}
+// // EX input: {username: Site1}
+// // output: number of users
+// function readUsername(req, res, next) {
+//   db.oneOrNone("SELECT Count(*) FROM Users WHERE username=${username}", req.body)
+//     .then(data => {
+//       returnDataOr404(res, data);
+//     })
+//     .catch(err => {
+//       next(err);
+//     })
+// }
 
-// EX input: {username: Site1, pswd: Site1}
-// output: number of users
-function readUsername(req, res, next) {
-  db.oneOrNone("SELECT userType FROM Users WHERE username=${username} AND password=${pswd}", req.body)
-    .then(data => {
-      returnDataOr404(res, data);
-    })
-    .catch(err => {
-      next(err);
-    })
-}
+// // EX input: {username: Site1, pswd: Site1}
+// // output: number of users
+// function readUsername(req, res, next) {
+//   db.oneOrNone("SELECT userType FROM Users WHERE username=${username} AND password=${pswd}", req.body)
+//     .then(data => {
+//       returnDataOr404(res, data);
+//     })
+//     .catch(err => {
+//       next(err);
+//     })
+// }
 
 // function readPlayer(req, res, next) {
 //   db.oneOrNone('SELECT * FROM Player WHERE id=${id}', req.params)
