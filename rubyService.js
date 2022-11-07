@@ -94,7 +94,7 @@ function readNotifications(req, res, next) {
 }
 
 function readEvents(req, res, next) {
-  db.many("SELECT name, time, description FROM Events")
+  db.many("SELECT name, time, description FROM Event")
     .then(data => {
       returnDataOr404(res, data);
     })
@@ -106,7 +106,7 @@ function readEvents(req, res, next) {
 // EX input: {username: Site1}
 // output: number of users
 function readUsername(req, res, next) {
-  db.oneOrNone("SELECT Count(*) FROM Users WHERE username=${username}", req.body)
+  db.oneOrNone("SELECT Count(*) FROM User WHERE username=${username}", req.body)
     .then(data => {
       returnDataOr404(res, data);
     })
