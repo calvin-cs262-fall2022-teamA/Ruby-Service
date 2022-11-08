@@ -1,10 +1,10 @@
 -- Drop previous versions of the tables if they they exist, in reverse order of foreign keys.
 
-Drop TABLE IF EXISTS TrailerUsers CASCADE;
-DROP TABLE IF EXISTS Events CASCADE;
-DROP TABLE IF EXISTS Items CASCADE;
-DROP TABLE IF EXISTS Trailers CASCADE;
-DROP TABLE IF EXISTS Users CASCADE;
+Drop TABLE IF EXISTS TrailerUsers;
+DROP TABLE IF EXISTS Events;
+DROP TABLE IF EXISTS Items;
+DROP TABLE IF EXISTS Trailers;
+DROP TABLE IF EXISTS Users;
 DROP TYPE IF EXISTS userAccess;
 
 CREATE TYPE userAccess AS ENUM ('Admin', 'Site', 'Volunteer');
@@ -30,7 +30,7 @@ CREATE TABLE Trailers (
 
 CREATE TABLE Items (
   ID SERIAL PRIMARY KEY, 
-  TID SERIAL REFERENCES Trailer(ID),
+  TID SERIAL REFERENCES Trailers(ID),
   iname varchar(25),
   quantity integer,
   notificationlevel integer,
@@ -38,8 +38,8 @@ CREATE TABLE Items (
   );
 
 CREATE TABLE TrailerUsers (
-  TID SERIAL REFERENCES Trailer(ID),
-  UID varchar(25) REFERENCES User(username)
+  TID SERIAL REFERENCES Trailers(ID),
+  UID varchar(25) REFERENCES Users(username)
   );
 
 -- Allow users to select data from the tables.
