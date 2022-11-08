@@ -12,3 +12,13 @@ Service: https://be-a-ruby.herokuapp.com/
 
 ## Setting up Heroku
 - [tutorial](https://devcenter.heroku.com/articles/getting-started-with-nodejs#set-up)
+
+## Running Heroku Locally
+```{bash}
+heroku config:get DB_SERVER -s  >> .env
+heroku config:get DB_PORT -s  >> .env
+heroku config:get DB_USER -s  >> .env
+heroku config:get DB_PASSWORD -s  >> .env
+```
+Confirm .env is in .gitignore
+Change and save .env text encoding from UTF-16 to UTF-8 (VSCode bottom right blue bar)
