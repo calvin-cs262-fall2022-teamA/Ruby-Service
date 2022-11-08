@@ -1,42 +1,42 @@
 -- Trailer
 -- Get all Trailer names
 SELECT name
-  FROM Trailer;
+  FROM Trailers;
 
 -- Get all Items in a Trailer, sort alphabetically
 SELECT *
-  FROM Item, Trailer
-  WHERE Item.TID = Trailer.ID
-    AND Trailer.tname = 'Trailer 1' -- Hardcoded Example
+  FROM Items, Trailers
+  WHERE Items.TID = Trailers.ID
+    AND Trailers.tname = 'Trailer 1' -- Hardcoded Example
 
 -- Get all items below below min quantity
 SELECT * 
-  FROM Item
-  WHERE Item.quantity < Item.notificationlevel
+  FROM Items
+  WHERE Items.quantity < Items.notificationlevel
 
 -- Add Item
-INSERT INTO Item
+INSERT INTO Items
   VALUES (DEFAULT, 2, 'Bananas', 50, 10, 5) -- Hardcoded Example
   -- RETURNING *;
 
 -- Add Trailer
-INSERT INTO Trailer
+INSERT INTO Trailers
   VALUES (DEFAULT, 'Trailer 3') -- Hardcoded Example
   -- RETURNING *;
 
 -- Set Item values
-UPDATE Item SET quantity = 70 WHERE ID = 6;
+UPDATE Items SET quantity = 70 WHERE ID = 6;
 
 -- Set Trailer name
-UPDATE Trailer SET tname = 'Trailer 3 - Renamed' WHERE ID = 3;
+UPDATE Trailers SET tname = 'Trailer 3 - Renamed' WHERE ID = 3;
 
 -- Remove Item
-DELETE FROM Item
+DELETE FROM Items
   WHERE ID = 6 -- Hardcoded Example
   RETURNING *;
 
 -- Remove Trailer
-DELETE FROM Trailer
+DELETE FROM Trailers
   WHERE ID = 3 -- Hardcoded Example
   RETURNING *;
 
@@ -60,7 +60,7 @@ INSERT INTO Users
 -- Set user password
 
 -- Remove user -- Delete references first
-DELETE FROM TrailerUser
+DELETE FROM TrailerUsers
   WHERE UID = 'Volunteer2' -- Hardcoded Example
   RETURNING *;
 DELETE FROM Users

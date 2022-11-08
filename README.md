@@ -21,3 +21,4 @@ heroku config:get DB_USER -s  >> .env
 heroku config:get DB_PASSWORD -s  >> .env
 ```
 Confirm .env is in .gitignore
+Change and save .env text encoding from UTF-16 to UTF-8 (VSCode bottom right blue bar)
