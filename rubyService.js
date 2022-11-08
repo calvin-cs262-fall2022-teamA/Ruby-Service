@@ -2,13 +2,23 @@
 
 // Set up the database connection.
 const pgp = require('pg-promise')();
-const db = pgp({
-  host: process.env.DB_SERVER,
-  port: process.env.DB_PORT,
-  database: process.env.DB_USER,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD
-});
+// postgres://user.password@server:port/user
+console.log(process.env.DB_USER);
+console.log(process.env.DB_PASSWORD);
+console.log(process.env.DB_SERVER);
+console.log(process.env.DB_PORT);
+const cn = new String('postgres://${DB_USER}.${DB_PASSWORD}@${DB_SERVER}:${DB_PORT}/${DB_USER}', process.env);
+console.log(cn);
+const db = pgp(cn);  
+// {
+//   host: process.env.DB_SERVER,
+//   port: process.env.DB_PORT,
+//   database: process.env.DB_USER,
+//   user: process.env.DB_USER,
+//   password: process.env.DB_PASSWORD
+// });
+
+
 
 // Configure the server and its routes.
 
@@ -59,6 +69,8 @@ function readHelloMessage(req, res) {
   res.send('Hello, Be A Ruby service!');
 }
 
+/********************* ITEMS *********************/
+
 // Returns list of trailer names
 function readTrailers(req, res, next) {
   db.many("SELECT tname FROM Trailer")
@@ -82,6 +94,8 @@ function readItems(req, res, next) {
     })
 }
 
+/********************* NOTIFICATIONS *********************/
+
 // output: iname, quantity, notificationlevel, increment
 function readNotifications(req, res, next) {
   db.many("SELECT iname, quantity, notificationlevel, increment FROM Item WHERE quantity < notificationlevel")
@@ -93,6 +107,8 @@ function readNotifications(req, res, next) {
     })
 }
 
+/********************* Events *********************/
+
 function readEvents(req, res, next) {
   db.many("SELECT name, time, description FROM Event")
     .then(data => {
@@ -102,6 +118,8 @@ function readEvents(req, res, next) {
       next(err);
     })
 }
+
+/********************* ITEMS *********************/
 
 // EX input: {username: Site1}
 // output: number of users
