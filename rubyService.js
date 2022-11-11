@@ -24,6 +24,10 @@ router.get("/", readHelloMessage);
 router.get("/trailers", readTrailers);
 router.get("/items", readItems);
 
+router.post("/trailers", createTrailer);
+router.post("/items", createItem);
+router.post("/trailerusers", createTrailerUser);
+
 // Notification operations
 router.get("/notifications", readNotifications);
 
@@ -61,9 +65,10 @@ function readHelloMessage(req, res) {
 
 /********************* ITEMS *********************/
 
-// Returns list of trailer names
+// Returns list of trailers for a username
+// EX input: {username: 'site1'}
 function readTrailers(req, res, next) {
-  db.many("SELECT tname FROM Trailers")
+  db.many("SELECT TID, tname FROM Trailers, TrailerUsers, Users WHERE Trailers.ID = TrailerUsers.TID AND Users.username = TrailerUsers.UID AND username = ${username}", req.body)
     .then(data => {
       returnDataOr404(res, data);
     })
@@ -72,16 +77,49 @@ function readTrailers(req, res, next) {
     })
 }
 
-// EX input: {trailerName: Trailer 1}
+// EX input: {TID: 1}
 // output: iname, quantity, notificationlevel, increment
 function readItems(req, res, next) {
-  db.many("SELECT iname, quantity, notificationlevel, increment FROM Items, Trailers WHERE Items.TID = Trailers.ID AND Trailers.tname=${body.trailerName}", req)
+  db.many("SELECT iname, quantity, notificationlevel, increment FROM Items WHERE Items.TID = ${TID}", req.body)
     .then(data => {
       returnDataOr404(res, data);
     })
     .catch(err => {
       next(err);
     })
+}
+
+// EX input {tname: 'Trailer 3'}
+function createTrailer(req, res, next) {
+  db.one('INSERT INTO Trailers VALUES (DEFAULT, ${tname}) RETURNING id', req.body)
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      next(err);
+    });
+}
+
+// EX input {TID: 2, iname: 'Bananas', qty: 50, notif: 10, inc: 5}
+function createItem(req, res, next) {
+  db.one('INSERT INTO Items VALUES (DEFAULT, ${TID}, ${iname}, ${qty}, ${notif}, ${inc}) RETURNING id', req.body)
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      next(err);
+    });
+}
+
+// EX input {TID: 2, username: 'Site1'}
+function createTrailerUser(req, res, next) {
+  db.one('INSERT INTO TrailerUsers VALUES (${TID}, ${username}) RETURNING id', req.body)
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      next(err);
+    });
 }
 
 /********************* NOTIFICATIONS *********************/
@@ -99,8 +137,9 @@ function readNotifications(req, res, next) {
 
 /********************* Events *********************/
 
+// Get upcoming events
 function readEvents(req, res, next) {
-  db.many("SELECT name, time, description FROM Events")
+  db.many("SELECT name, time, description FROM Events WHERE date(now()) <= date(Events.time)")
     .then(data => {
       returnDataOr404(res, data);
     })
@@ -135,30 +174,10 @@ function readUserType(req, res, next) {
     })
 }
 
-// function readPlayer(req, res, next) {
-//   db.oneOrNone('SELECT * FROM Player WHERE id=${id}', req.params)
-//     .then(data => {
-//       returnDataOr404(res, data);
-//     })
-//     .catch(err => {
-//       next(err);
-//     });
-// }
-
 // function updatePlayer(req, res, next) {
 //   db.oneOrNone('UPDATE Player SET email=${body.email}, name=${body.name} WHERE id=${params.id} RETURNING id', req)
 //     .then(data => {
 //       returnDataOr404(res, data);
-//     })
-//     .catch(err => {
-//       next(err);
-//     });
-// }
-
-// function createPlayer(req, res, next) {
-//   db.one('INSERT INTO Player(email, name) VALUES (${email}, ${name}) RETURNING id', req.body)
-//     .then(data => {
-//       res.send(data);
 //     })
 //     .catch(err => {
 //       next(err);

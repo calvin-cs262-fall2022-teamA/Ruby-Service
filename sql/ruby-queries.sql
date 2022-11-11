@@ -1,9 +1,9 @@
 -- Trailer
 -- Get all Trailer names
-SELECT name
+SELECT *
   FROM Trailers;
 
--- Get all Items in a Trailer, sort alphabetically
+-- Get all Items in a Trailer
 SELECT *
   FROM Items, Trailers
   WHERE Items.TID = Trailers.ID
