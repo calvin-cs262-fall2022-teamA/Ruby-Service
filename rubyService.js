@@ -21,8 +21,8 @@ router.use(express.json());
 router.get("/", readHelloMessage);
 
 // Item operations
-router.get("/trailers", readTrailers);
-router.get("/items", readItems);
+router.get("/trailers/:username", readTrailers);
+router.get("/items/:TID", readItems);
 
 router.post("/trailers", createTrailer);
 router.post("/items", createItem);
@@ -35,8 +35,11 @@ router.get("/notifications", readNotifications);
 router.get("/events", readEvents);
 
 // User operations
-router.get("/username", readUsername);
-router.get("/usertype", readUserType);
+router.get("/users/:username", readUsername);
+router.get("/users/:username/:pswd", readUserType);
+
+router.post("/users", createUser);
+router.delete("/users", deleteUser);
 
 app.use(router);
 app.use(errorHandler);
@@ -66,9 +69,11 @@ function readHelloMessage(req, res) {
 /********************* ITEMS *********************/
 
 // Returns list of trailers for a username
-// EX input: {username: 'site1'}
+// EX
+// - local: http://localhost:5000/trailers/Admin1
+// - service: https://be-a-ruby.herokuapp.com/trailers/Admin1
 function readTrailers(req, res, next) {
-  db.many("SELECT TID, tname FROM Trailers, TrailerUsers, Users WHERE Trailers.ID = TrailerUsers.TID AND Users.username = TrailerUsers.UID AND username = ${username}", req.body)
+  db.many('SELECT TID, tname FROM Trailers, TrailerUsers, Users WHERE Trailers.ID = TrailerUsers.TID AND Users.username = TrailerUsers.UID AND username = ${username}', req.params)
     .then(data => {
       returnDataOr404(res, data);
     })
@@ -77,10 +82,11 @@ function readTrailers(req, res, next) {
     })
 }
 
-// EX input: {TID: 1}
-// output: iname, quantity, notificationlevel, increment
+// EX
+// - local: http://localhost:5000/items/1
+// - service: https://be-a-ruby.herokuapp.com/items/1
 function readItems(req, res, next) {
-  db.many("SELECT iname, quantity, notificationlevel, increment FROM Items WHERE Items.TID = ${TID}", req.body)
+  db.many('SELECT * FROM Items WHERE Items.TID = ${TID}', req.params)
     .then(data => {
       returnDataOr404(res, data);
     })
@@ -89,7 +95,20 @@ function readItems(req, res, next) {
     })
 }
 
-// EX input {tname: 'Trailer 3'}
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next
+  await fetch('http://localhost:5000/trailers', {
+   method: 'POST', 
+   headers: {'Content-Type': 'application/json'}, 
+   body: JSON.stringify({tname:'Trailer 3'})
+  }).then((response) => response.json())
+  .then((data) => {console.log(data)})
+  .catch((error) => {console.log(error)}) 
+ 
+ */
 function createTrailer(req, res, next) {
   db.one('INSERT INTO Trailers VALUES (DEFAULT, ${tname}) RETURNING id', req.body)
     .then(data => {
@@ -100,7 +119,20 @@ function createTrailer(req, res, next) {
     });
 }
 
-// EX input {TID: 2, iname: 'Bananas', qty: 50, notif: 10, inc: 5}
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next
+  await fetch('http://localhost:5000/items', {
+   method: 'POST', 
+   headers: {'Content-Type': 'application/json'}, 
+   body: JSON.stringify({TID: 2, iname: 'Bananas', qty: 50, notif: 10, inc: 5})
+  }).then((response) => response.json())
+  .then((data) => {console.log(data)})
+  .catch((error) => {console.log(error)}) 
+ 
+ */
 function createItem(req, res, next) {
   db.one('INSERT INTO Items VALUES (DEFAULT, ${TID}, ${iname}, ${qty}, ${notif}, ${inc}) RETURNING id', req.body)
     .then(data => {
@@ -111,9 +143,22 @@ function createItem(req, res, next) {
     });
 }
 
-// EX input {TID: 2, username: 'Site1'}
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next
+  await fetch('http://localhost:5000/trailerusers', {
+   method: 'POST', 
+   headers: {'Content-Type': 'application/json'}, 
+   body: JSON.stringify({TID: 3, username: 'Admin1'})
+  }).then((response) => response.json())
+  .then((data) => {console.log(data)})
+  .catch((error) => {console.log(error)}) 
+ 
+ */
 function createTrailerUser(req, res, next) {
-  db.one('INSERT INTO TrailerUsers VALUES (${TID}, ${username}) RETURNING id', req.body)
+  db.one('INSERT INTO TrailerUsers VALUES (${TID}, ${username}) RETURNING TID', req.body)
     .then(data => {
       res.send(data);
     })
@@ -124,9 +169,12 @@ function createTrailerUser(req, res, next) {
 
 /********************* NOTIFICATIONS *********************/
 
+// EX
+// - local: http://localhost:5000/notifications
+// - service: https://be-a-ruby.herokuapp.com/notifications
 // output: iname, quantity, notificationlevel, increment
 function readNotifications(req, res, next) {
-  db.many("SELECT iname, quantity, notificationlevel, increment FROM Items WHERE quantity < notificationlevel")
+  db.many('SELECT iname, quantity, notificationlevel, increment FROM Items WHERE quantity < notificationlevel')
     .then(data => {
       returnDataOr404(res, data);
     })
@@ -138,8 +186,11 @@ function readNotifications(req, res, next) {
 /********************* Events *********************/
 
 // Get upcoming events
+// EX
+// - local: http://localhost:5000/events
+// - service: https://be-a-ruby.herokuapp.com/events
 function readEvents(req, res, next) {
-  db.many("SELECT name, time, description FROM Events WHERE date(now()) <= date(Events.time)")
+  db.many('SELECT name, time, description FROM Events WHERE date(now()) <= date(Events.time)')
     .then(data => {
       returnDataOr404(res, data);
     })
@@ -150,10 +201,12 @@ function readEvents(req, res, next) {
 
 /********************* USERS *********************/
 
-// EX input: {username: Site1}
+// EX
+// - local: http://localhost:5000/user/Site0 => 0
+// - service: https://be-a-ruby.herokuapp.com/user/Site1 => 1
 // output: number of users
 function readUsername(req, res, next) {
-  db.oneOrNone("SELECT Count(*) FROM Users WHERE username=${username}", req.body)
+  db.oneOrNone('SELECT Count(*) FROM Users WHERE username=${username}', req.params)
     .then(data => {
       returnDataOr404(res, data);
     })
@@ -162,16 +215,67 @@ function readUsername(req, res, next) {
     })
 }
 
-// EX input: {username: Site1, pswd: Site1}
-// output: number of users
+// output: usertype if found /usertype/:username/:password
+// EX
+// - local: http://localhost:5000/user/Site1/Site1 => {usertype: "Site"}
+// - service: https://be-a-ruby.herokuapp.com/user/Site0/Site0 => NULL
 function readUserType(req, res, next) {
-  db.oneOrNone("SELECT userType FROM Users WHERE username=${username} AND password=${pswd}", req.body)
+  db.oneOrNone('SELECT userType FROM Users WHERE username=${username} AND password=${pswd}', req.params)
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      next(err);
+    })
+}
+
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next
+  await fetch('http://localhost:5000/users', {
+   method: 'POST', 
+   headers: {'Content-Type': 'application/json'}, 
+   body: JSON.stringify({username: 'Site2', pswd: 'Site2', type: 'Site'})
+  }).then((response) => response.json())
+  .then((data) => {console.log(data)})
+  .catch((error) => {console.log(error)}) 
+ 
+ */
+function createUser(req, res, next) {
+  db.one('INSERT INTO Users VALUES (${username}, ${pswd}, ${type}) RETURNING userType', req.body)
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      next(err);
+    });
+}
+
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next
+  await fetch('http://localhost:5000/users', {
+   method: 'DELETE', 
+   headers: {'Content-Type': 'application/json'}, 
+   body: JSON.stringify({username: 'Site2'})
+  }).then((response) => response.json())
+  .then((data) => {console.log(data)})
+  .catch((error) => {console.log(error)}) 
+ 
+ */
+function deleteUser(req, res, next) {
+  // Delete references
+  db.multi('DELETE FROM TrailerUsers WHERE UID = ${username};DELETE FROM Users WHERE username=${username} Returning username', req.body)
     .then(data => {
       returnDataOr404(res, data);
     })
     .catch(err => {
       next(err);
-    })
+    });
 }
 
 // function updatePlayer(req, res, next) {
