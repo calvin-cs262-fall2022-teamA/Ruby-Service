@@ -21,12 +21,14 @@ router.use(express.json());
 router.get("/", readHelloMessage);
 
 // Item operations
-router.get("/trailers/:username", readTrailers);
-router.get("/items/:TID", readItems);
+router.get("/traileritems/:username", readTrailerItems);
 
 router.post("/trailers", createTrailer);
 router.post("/items", createItem);
 router.post("/trailerusers", createTrailerUser);
+
+router.put("/items", updateItem);
+router.delete("/items", deleteItem);
 
 // Notification operations
 router.get("/notifications", readNotifications);
@@ -70,23 +72,20 @@ function readHelloMessage(req, res) {
 
 // Returns list of trailers for a username
 // EX
-// - local: http://localhost:5000/trailers/Admin1
+// - local: http://localhost:5000/traileritems/Admin1
 // - service: https://be-a-ruby.herokuapp.com/trailers/Admin1
-function readTrailers(req, res, next) {
-  db.many('SELECT TID, tname FROM Trailers, TrailerUsers, Users WHERE Trailers.ID = TrailerUsers.TID AND Users.username = TrailerUsers.UID AND username = ${username}', req.params)
-    .then(data => {
-      returnDataOr404(res, data);
-    })
-    .catch(err => {
-      next(err);
-    })
-}
-
-// EX
-// - local: http://localhost:5000/items/1
-// - service: https://be-a-ruby.herokuapp.com/items/1
-function readItems(req, res, next) {
-  db.many('SELECT * FROM Items WHERE Items.TID = ${TID}', req.params)
+function readTrailerItems(req, res, next) {
+  db.multi('\
+    SELECT TID, tname FROM Trailers, TrailerUsers, Users \
+      WHERE Trailers.ID = TrailerUsers.TID \
+        AND Users.username = TrailerUsers.UID \
+        AND username = ${username}; \
+    SELECT Items.ID, tname, Items.TID, iname, quantity, notificationlevel, increment \
+      FROM Items, Users, Trailers, TrailerUsers \
+      WHERE Items.TID = TrailerUsers.TID \
+        AND Users.username = TrailerUsers.UID \
+        AND Trailers.ID = TrailerUsers.TID \
+        AND username = ${username};', req.params)
     .then(data => {
       returnDataOr404(res, data);
     })
@@ -167,6 +166,55 @@ function createTrailerUser(req, res, next) {
     });
 }
 
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next
+  await fetch('http://localhost:5000/items', {
+   method: 'PUT', 
+   headers: {'Content-Type': 'application/json'}, 
+   body: JSON.stringify({ID: 6, name: 'Banana', quantity: '50', notificationlevel: '10', increment: '5'})
+  }).then((response) => response.json())
+  .then((data) => {console.log(data)})
+  .catch((error) => {console.log(error)}) 
+ 
+ */
+function updateItem(req, res, next) {
+  db.oneOrNone('UPDATE Items SET iname=${name}, quantity=${quantity}, notificationlevel=${notificationlevel}, increment=${increment} WHERE ID=${ID} RETURNING ID', req.body)
+    .then(data => {
+      returnDataOr404(res, data);
+    })
+    .catch(err => {
+      next(err);
+    });
+}
+
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next
+  await fetch('http://localhost:5000/items', {
+   method: 'DELETE', 
+   headers: {'Content-Type': 'application/json'}, 
+   body: JSON.stringify({ID: 6})
+  }).then((response) => response.json())
+  .then((data) => {console.log(data)})
+  .catch((error) => {console.log(error)}) 
+ 
+ */
+function deleteItem(req, res, next) {
+  // Delete references
+  db.oneOrNone('DELETE FROM Items WHERE ID = ${ID} RETURNING ID', req.body)
+    .then(data => {
+      returnDataOr404(res, data);
+    })
+    .catch(err => {
+      next(err);
+    });
+}
+
 /********************* NOTIFICATIONS *********************/
 
 // EX
@@ -202,8 +250,8 @@ function readEvents(req, res, next) {
 /********************* USERS *********************/
 
 // EX
-// - local: http://localhost:5000/user/Site0 => 0
-// - service: https://be-a-ruby.herokuapp.com/user/Site1 => 1
+// - local: http://localhost:5000/users/Site0 => 0
+// - service: https://be-a-ruby.herokuapp.com/users/Site1 => 1
 // output: number of users
 function readUsername(req, res, next) {
   db.oneOrNone('SELECT Count(*) FROM Users WHERE username=${username}', req.params)
@@ -217,10 +265,10 @@ function readUsername(req, res, next) {
 
 // output: usertype if found /usertype/:username/:password
 // EX
-// - local: http://localhost:5000/user/Site1/Site1 => {usertype: "Site"}
-// - service: https://be-a-ruby.herokuapp.com/user/Site0/Site0 => NULL
+// - local: http://localhost:5000/users/Site1/Site1 => {usertype: "Site"}
+// - service: https://be-a-ruby.herokuapp.com/users/Site0/Site0 => NULL
 function readUserType(req, res, next) {
-  db.oneOrNone('SELECT userType FROM Users WHERE username=${username} AND password=${pswd}', req.params)
+  db.oneOrNone('SELECT (SELECT userType FROM Users WHERE username=${username} AND password=${pswd}) as usertype', req.params)
     .then(data => {
       res.send(data);
     })
@@ -277,23 +325,3 @@ function deleteUser(req, res, next) {
       next(err);
     });
 }
-
-// function updatePlayer(req, res, next) {
-//   db.oneOrNone('UPDATE Player SET email=${body.email}, name=${body.name} WHERE id=${params.id} RETURNING id', req)
-//     .then(data => {
-//       returnDataOr404(res, data);
-//     })
-//     .catch(err => {
-//       next(err);
-//     });
-// }
-
-// function deletePlayer(req, res, next) {
-//   db.oneOrNone('DELETE FROM Player WHERE id=${id} RETURNING id', req.params)
-//     .then(data => {
-//       returnDataOr404(res, data);
-//     })
-//     .catch(err => {
-//       next(err);
-//     });
-// }
