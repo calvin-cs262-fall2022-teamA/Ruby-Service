@@ -1,4 +1,5 @@
 // Based on https://github.com/calvin-cs262-organization/monopoly-service/blob/master/monopolyService.js
+// JS application to run the data service on Heroku and access the database
 
 // Set up the database connection.
 const pgp = require('pg-promise')();

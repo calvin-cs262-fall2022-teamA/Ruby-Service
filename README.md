@@ -24,4 +24,6 @@ Confirm .env is in .gitignore
 Change and save .env text encoding from UTF-16 to UTF-8 (VSCode bottom right blue bar)
 
 ### Send post commands
-Use browser console
+Use browser console: Right-click on localhost:5000/ select inspect, then console.
+
+Issues occur when trying to send commands from other addresses EX: localhost:5000/trailerusers/Admin1
