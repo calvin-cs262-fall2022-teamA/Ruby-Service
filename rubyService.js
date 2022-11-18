@@ -264,10 +264,10 @@ function readUsername(req, res, next) {
     })
 }
 
-// output: usertype if found /usertype/:username/:password
+// output: usertype if found /users/:username/:password
 // EX
 // - local: http://localhost:5000/users/Site1/Site1 => {usertype: "Site"}
-// - service: https://be-a-ruby.herokuapp.com/users/Site0/Site0 => NULL
+// - service: https://be-a-ruby.herokuapp.com/users/Site0/Site0 => {usertype: "NULL"}
 function readUserType(req, res, next) {
   db.oneOrNone('SELECT (SELECT userType FROM Users WHERE username=${username} AND password=${pswd}) as usertype', req.params)
     .then(data => {
