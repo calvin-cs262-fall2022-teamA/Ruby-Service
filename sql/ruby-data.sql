@@ -16,7 +16,7 @@ INSERT INTO Events VALUES (DEFAULT, 'Food Distribution', '2022-12-29 13:40:00', 
 -- Items (ID, TID, iname, quantity, notificationlevel, increment);
 INSERT INTO Items VALUES (DEFAULT, 1, 'Cups', 300, 50, 25);
 INSERT INTO Items VALUES (DEFAULT, 2, 'Cups', 100, 150, 50);
-INSERT INTO Items VALUES (DEFAULT, 1, 'Spoons', 100, 10, 40);
+INSERT INTO Items VALUES (DEFAULT, 1, 'Spoons', 100, 150, 40);
 INSERT INTO Items VALUES (DEFAULT, 1, 'Forks', 800, 100, 150);
 INSERT INTO Items VALUES (DEFAULT, 2, 'Plates', 200, 75, 40);
 
