@@ -8,11 +8,10 @@ DROP TABLE IF EXISTS Users;
 DROP TYPE IF EXISTS userAccess;
 
 CREATE TYPE userAccess AS ENUM ('Admin', 'Site', 'Volunteer');
-
 -- Create the schema.
 CREATE TABLE Users (
   username varchar(25) PRIMARY KEY NOT NULL,
-  password varchar(50) NOT NULL,
+  password varchar(100) NOT NULL,
 	userType userAccess NOT NULL
 	);
 
